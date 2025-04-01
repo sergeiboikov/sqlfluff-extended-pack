@@ -18,7 +18,12 @@ def pk_linter():
     config = FluffConfig(configs={
         "core": {"dialect": "postgres"},
         # Use the actual rule name from the class
-        "rules": {Rule_CR01.name: {"enabled": True}},
+        "rules": {
+            Rule_CR01.name: {
+                "enabled": True,
+                "expected_prefix": "pk_"
+            }
+        },
         "exclude_rules": ["all"]
     })
     return Linter(config=config)
@@ -30,7 +35,12 @@ def fk_linter():
     config = FluffConfig(configs={
         "core": {"dialect": "postgres"},
         # Use the actual rule name from the class
-        "rules": {Rule_CR02.name: {"enabled": True}},
+        "rules": {
+            Rule_CR02.name: {
+                "enabled": True,
+                "expected_prefix": "fk_"
+            }
+        },
         "exclude_rules": ["all"]
     })
     return Linter(config=config)
@@ -42,7 +52,12 @@ def chk_linter():
     config = FluffConfig(configs={
         "core": {"dialect": "postgres"},
         # Use the actual rule name from the class
-        "rules": {Rule_CR03.name: {"enabled": True}},
+        "rules": {
+            Rule_CR03.name: {
+                "enabled": True,
+                "expected_prefix": "chk_"
+            }
+        },
         "exclude_rules": ["all"]
     })
     return Linter(config=config)
@@ -54,7 +69,12 @@ def uc_linter():
     config = FluffConfig(configs={
         "core": {"dialect": "postgres"},
         # Use the actual rule name from the class
-        "rules": {Rule_CR04.name: {"enabled": True}},
+        "rules": {
+            Rule_CR04.name: {
+                "enabled": True,
+                "expected_prefix": "uc_"
+            }
+        },
         "exclude_rules": ["all"]
     })
     return Linter(config=config)
@@ -66,7 +86,12 @@ def df_linter():
     config = FluffConfig(configs={
         "core": {"dialect": "postgres"},
         # Use the actual rule name from the class
-        "rules": {Rule_CR05.name: {"enabled": True}},
+        "rules": {
+            Rule_CR05.name: {
+                "enabled": True,
+                "expected_prefix": "df_"
+            }
+        },
         "exclude_rules": ["all"]
     })
     return Linter(config=config)
@@ -78,11 +103,11 @@ def all_constraints_linter():
     config = FluffConfig(configs={
         "core": {"dialect": "postgres"},
         "rules": {
-            Rule_CR01.name: {"enabled": True},
-            Rule_CR02.name: {"enabled": True},
-            Rule_CR03.name: {"enabled": True},
-            Rule_CR04.name: {"enabled": True},
-            Rule_CR05.name: {"enabled": True}
+            Rule_CR01.name: {"enabled": True, "expected_prefix": "pk_"},
+            Rule_CR02.name: {"enabled": True, "expected_prefix": "fk_"},
+            Rule_CR03.name: {"enabled": True, "expected_prefix": "chk_"},
+            Rule_CR04.name: {"enabled": True, "expected_prefix": "uc_"},
+            Rule_CR05.name: {"enabled": True, "expected_prefix": "df_"}
         },
         "exclude_rules": ["all"]
     })
