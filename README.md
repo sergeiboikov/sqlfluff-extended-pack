@@ -34,6 +34,40 @@ sqlfluff rules
 
 You should see all the custom rules listed among the available rules.
 
+## Configuration
+
+You can customize the expected prefixes for each constraint type by creating a `.sqlfluff` configuration file:
+
+```ini
+[sqlfluff]
+dialect = postgres
+
+[sqlfluff:rules]
+rule_allowlist = CR01, CR02, CR03, CR04, CR05
+
+[sqlfluff:rules:constraints.pk_constraint_naming]
+# For PRIMARY KEY constraints
+expected_prefix = pk_
+
+[sqlfluff:rules:constraints.fk_constraint_naming]
+# For FOREIGN KEY constraints
+expected_prefix = fk_
+
+[sqlfluff:rules:constraints.chk_constraint_naming]
+# For CHECK constraints
+expected_prefix = chk_
+
+[sqlfluff:rules:constraints.uc_constraint_naming]
+# For UNIQUE constraints
+expected_prefix = uc_
+
+[sqlfluff:rules:constraints.df_constraint_naming]
+# For DEFAULT constraints
+expected_prefix = df_
+```
+
+If you don't specify prefixes in your configuration, the plugin will use the default prefixes shown above.
+
 ## Usage
 
 Once installed, the plugin automatically integrates with SQLFluff. Just run SQLFluff as usual.
@@ -41,13 +75,13 @@ For example:
 
 ```bash
 # Lint using all constraint rules
-sqlfluff lint tests/test.sql --dialect postgres
+sqlfluff lint tests/test_constraints.sql --config .sqlfluff
 
 # Lint using a specific constraint rule
-sqlfluff lint tests/test.sql --dialect postgres --rules CR01
+sqlfluff lint tests/test_constraints.sql --config .sqlfluff --rules CR01
 
 # Generate detailed debug output
-sqlfluff lint tests/test.sql --dialect postgres --rules CR01 -vvvv > debug.log
+sqlfluff lint tests/test_constraints.sql --config .sqlfluff --rules CR01 -vvvv > debug.log
 ```
 
 ## Examples
@@ -61,12 +95,13 @@ CREATE TABLE public.person (
     person_id INT,
     email TEXT,
     age INT,
-    is_active BOOLEAN,
+    is_active BOOLEAN DEFAULT FALSE,
     CONSTRAINT person_pk PRIMARY KEY (person_id),
     CONSTRAINT email_unique UNIQUE (email),
-    CONSTRAINT age_positive CHECK (age > 0),
-    CONSTRAINT active_default DEFAULT (TRUE) FOR is_active
+    CONSTRAINT age_positive CHECK (age > 0)
 );
+
+ALTER TABLE public.person ALTER COLUMN is_active SET DEFAULT TRUE;
 
 CREATE TABLE public.orders (
     order_id INT,
@@ -83,11 +118,10 @@ CREATE TABLE public.person (
     person_id INT,
     email TEXT,
     age INT,
-    is_active BOOLEAN,
+    is_active BOOLEAN DEFAULT FALSE,
     CONSTRAINT pk_person PRIMARY KEY (person_id),
     CONSTRAINT uc_email UNIQUE (email),
-    CONSTRAINT chk_age_positive CHECK (age > 0),
-    CONSTRAINT df_active DEFAULT (TRUE) FOR is_active
+    CONSTRAINT chk_age_positive CHECK (age > 0)
 );
 
 CREATE TABLE public.orders (
@@ -104,4 +138,12 @@ CREATE TABLE public.orders (
 CREATE TABLE public.person (person_id INT, CONSTRAINT person_pk PRIMARY KEY (person_id)); -- Will flag the PRIMARY KEY constraint on public.person table
 
 ALTER TABLE public.person ADD CONSTRAINT email_unique UNIQUE (email); -- Will flag the UNIQUE constraint on public.person table
+```
+
+The following SQL would pass validation:
+
+```sql
+CREATE TABLE public.person (person_id INT, CONSTRAINT pk_person PRIMARY KEY (person_id)); -- Correctly named PRIMARY KEY constraint
+
+ALTER TABLE public.person ADD CONSTRAINT uc_person_email UNIQUE (email); -- Correctly named UNIQUE constraint
 ```
