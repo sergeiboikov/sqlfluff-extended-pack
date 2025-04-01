@@ -1,0 +1,7 @@
+dialect = postgres
+
+[sqlfluff:custom_rules:constraints.pk_constraint_naming]
+# Table/column names must be snake_case
+# Good: CONSTRAINT pk_person PRIMARY KEY (person_id)
+# Bad: CONSTRAINT person_pk PRIMARY KEY (person_id)
+expected_prefix = pk_
