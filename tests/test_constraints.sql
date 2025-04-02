@@ -28,12 +28,7 @@ CREATE TABLE public.customer (
 );
 
 -- Default constraint with incorrect naming (violates CR05)
--- Note: PostgreSQL doesn't support CONSTRAINT for DEFAULT values
--- using ALTER TABLE instead
-CREATE TABLE public.employee (
-    employee_id INT,
-    is_active BOOLEAN DEFAULT FALSE
+CREATE TABLE public.person (
+    person_id INT,
+    created_at TIMESTAMP CONSTRAINT default_created_at DEFAULT (CURRENT_TIMESTAMP)
 );
-
-ALTER TABLE public.employee
-ALTER COLUMN is_active SET DEFAULT TRUE;

@@ -1,7 +1,7 @@
 """Tests for the CR04 rule (UNIQUE constraint naming)."""
 
-import pytest
 from tests.fixtures import uc_linter
+
 
 class TestUniqueConstraintRule:
     """Tests for the unique constraint naming rule (CR04)."""

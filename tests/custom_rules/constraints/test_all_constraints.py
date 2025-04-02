@@ -1,6 +1,5 @@
 """Tests for all constraint naming rules together."""
 
-import pytest
 from tests.fixtures import all_constraints_linter
 
 

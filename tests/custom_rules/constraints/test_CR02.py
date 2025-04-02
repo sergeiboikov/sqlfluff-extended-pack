@@ -1,6 +1,5 @@
 """Tests for the CR02 rule (FOREIGN KEY constraint naming)."""
 
-import pytest
 from tests.fixtures import fk_linter
 
 
