@@ -1,0 +1,31 @@
+[sqlfluff]
+dialect = postgres
+max_line_length = 160
+
+[sqlfluff:rules]
+rule_allowlist = CR01, CR02, CR03, CR04, CR05
+
+[sqlfluff:rules:constraints.pk_constraint_naming]
+# Good: CONSTRAINT pk_person PRIMARY KEY (person_id)
+# Bad: CONSTRAINT person_pk PRIMARY KEY (person_id)
+expected_prefix = pk_
+
+[sqlfluff:rules:constraints.fk_constraint_naming]
+# Good: CONSTRAINT fk_orders_person FOREIGN KEY (person_id)
+# Bad: CONSTRAINT orders_person_fk FOREIGN KEY (person_id)
+expected_prefix = fk_
+
+[sqlfluff:rules:constraints.chk_constraint_naming]
+# Good: CONSTRAINT chk_person_age CHECK (age > 0)
+# Bad: CONSTRAINT age_positive CHECK (age > 0)
+expected_prefix = chk_
+
+[sqlfluff:rules:constraints.uc_constraint_naming]
+# Good: CONSTRAINT uc_person_email UNIQUE (email)
+# Bad: CONSTRAINT email_unique UNIQUE (email)
+expected_prefix = uc_
+
+[sqlfluff:rules:constraints.df_constraint_naming]
+# Good: CONSTRAINT df_person_active DEFAULT (TRUE) FOR is_active
+# Bad: CONSTRAINT active_default DEFAULT (TRUE) FOR is_active
+expected_prefix = df_
