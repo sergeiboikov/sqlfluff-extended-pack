@@ -1,7 +1,5 @@
 """Tests for the CR01 rule (PRIMARY KEY constraint naming)."""
 
-from tests.fixtures import pk_linter
-
 
 class TestPrimaryKeyConstraintRule:
     """Tests for the primary key constraint naming rule (CR01)."""

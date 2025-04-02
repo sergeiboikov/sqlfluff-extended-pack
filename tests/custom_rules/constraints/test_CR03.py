@@ -1,7 +1,5 @@
 """Tests for the CR03 rule (CHECK constraint naming)."""
 
-from tests.fixtures import chk_linter
-
 
 class TestCheckConstraintRule:
     """Tests for the check constraint naming rule (CR03)."""

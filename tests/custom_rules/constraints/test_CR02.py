@@ -1,7 +1,5 @@
 """Tests for the CR02 rule (FOREIGN KEY constraint naming)."""
 
-from tests.fixtures import fk_linter
-
 
 class TestForeignKeyConstraintRule:
     """Tests for the foreign key constraint naming rule (CR02)."""

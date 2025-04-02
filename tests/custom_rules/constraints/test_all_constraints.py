@@ -1,7 +1,5 @@
 """Tests for all constraint naming rules together."""
 
-from tests.fixtures import all_constraints_linter
-
 
 class TestAllConstraintRules:
     """Tests for all constraint naming rules together."""

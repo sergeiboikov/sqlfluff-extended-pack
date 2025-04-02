@@ -1,7 +1,5 @@
 """Tests for the CR05 rule (DEFAULT constraint naming)."""
 
-from tests.fixtures import df_linter
-
 
 class TestDefaultConstraintRule:
     """Tests for the default constraint naming rule (CR05)."""
