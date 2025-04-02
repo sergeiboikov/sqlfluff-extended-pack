@@ -8,7 +8,7 @@ A SQLFluff plugin to enforce constraint naming conventions according to the Post
 
 This plugin implements the following constraint naming rules:
 
-- **CR01** - PRIMARY KEY constraints should use `pk_` prefix
+- **CR01** - PRIMARY KEY constraints should use `pk_` prefix1
 - **CR02** - FOREIGN KEY constraints should use `fk_` prefix
 - **CR03** - CHECK constraints should use `chk_` prefix
 - **CR04** - UNIQUE constraints should use `uc_` prefix
