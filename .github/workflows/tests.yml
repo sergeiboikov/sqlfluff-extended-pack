@@ -38,7 +38,7 @@ jobs:
 
     - name: Test with sample SQL
       run: |
-        echo "CREATE TABLE test (id INT, CONSTRAINT person_pk PRIMARY KEY (id));" > sample.sql
+        echo "CREATE TABLE test (id INT, CONSTRAINT pk_person PRIMARY KEY (id));" > sample.sql
         sqlfluff lint sample.sql --rules CR01
 
   lint:
