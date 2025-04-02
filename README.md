@@ -16,7 +16,7 @@ This plugin implements the following constraint naming rules:
 
 ## Requirements
 
-### Python Compatibility
+### Python Compatibility1
 
 This plugin requires Python 3.8 or newer. It has been tested with the following Python versions:
 - Python 3.8
