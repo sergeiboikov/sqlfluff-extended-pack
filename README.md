@@ -1,5 +1,7 @@
 # SQLFluff Constraint Naming Plugin
 
+[![Tests](https://github.com/sergeiboikov/sqlfluff-extended-pack/actions/workflows/tests.yml/badge.svg)](https://github.com/sergeiboikov/sqlfluff-extended-pack/actions/workflows/tests.yml)
+
 A SQLFluff plugin to enforce constraint naming conventions according to the Postgres SQL Format Guidelines. The plugin validates objects to ensure they follow standardized naming patterns.
 
 ## Rules Implemented
@@ -10,7 +12,23 @@ This plugin implements the following constraint naming rules:
 - **CR02** - FOREIGN KEY constraints should use `fk_` prefix
 - **CR03** - CHECK constraints should use `chk_` prefix
 - **CR04** - UNIQUE constraints should use `uc_` prefix
-- **CR05** - DEFAULT constraints should use `df_` prefix
+- **CR05** - DEFAULT constraints should use `df_` prefix. This rule checks explicitly named DEFAULT constraints with the CONSTRAINT keyword. DEFAULT as a column property (without a name) is not checked.
+
+## Requirements
+
+### Python Compatibility
+
+This plugin requires Python 3.8 or newer. It has been tested with the following Python versions:
+- Python 3.8
+- Python 3.9
+- Python 3.10
+- Python 3.11
+- Python 3.12
+
+### Dependencies
+
+- SQLFluff 3.3.1 or newer
+- pre-commit 3.5.0 or newer (for development)
 
 ## Installation
 
@@ -67,6 +85,34 @@ expected_prefix = df_
 ```
 
 If you don't specify prefixes in your configuration, the plugin will use the default prefixes shown above.
+
+## Using as a Library
+
+You can use this project as a library by installing it directly from GitHub:
+
+```bash
+pip install git+https://github.com/sergeiboikov/sqlfluff-extended-pack.git
+```
+
+### Programmatic Configuration
+
+You can set custom prefixes in the configuration file:
+```ini
+[sqlfluff:rules:constraints.pk_constraint_naming]
+expected_prefix = pk_
+
+[sqlfluff:rules:constraints.fk_constraint_naming]
+expected_prefix = fk_
+
+[sqlfluff:rules:constraints.chk_constraint_naming]
+expected_prefix = chk_
+
+[sqlfluff:rules:constraints.uc_constraint_naming]
+expected_prefix = uc_
+
+[sqlfluff:rules:constraints.df_constraint_naming]
+expected_prefix = df_
+```
 
 ## Usage
 
