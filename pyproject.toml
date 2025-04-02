@@ -33,6 +33,11 @@ package-dir = {"" = "src"}
 # Explicitly list all packages to avoid registration conflicts
 packages = ["custom_rules", "custom_rules.constraints"]
 
+[dependency-groups]
+dev = [
+    "flake8>=5.0.4",
+]
+
 # Register the plugin entry point directly to custom_rules
 [project.entry-points.sqlfluff]
 sqlfluff_extended_pack = "custom_rules"
