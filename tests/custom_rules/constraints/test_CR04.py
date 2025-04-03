@@ -5,7 +5,7 @@ class TestUniqueConstraintRule:
     """Tests for the unique constraint naming rule (CR04)."""
 
     def test_unique_constraint_valid(self, uc_linter):
-        """Test that a valid unique constraint name passes."""
+        """Test that a valid unique constraint name passes when creating a table."""
         sql = """
         CREATE TABLE public.person (
             person_id INT,
@@ -18,7 +18,7 @@ class TestUniqueConstraintRule:
         assert len(violations) == 0
 
     def test_unique_constraint_invalid(self, uc_linter):
-        """Test that an invalid unique constraint name fails."""
+        """Test that an invalid unique constraint name fails when creating a table."""
         sql = """
         CREATE TABLE public.person (
             person_id INT,
@@ -32,7 +32,7 @@ class TestUniqueConstraintRule:
         assert "should start with 'uc_'" in violations[0].description.lower()
 
     def test_inline_unique_constraint(self, uc_linter):
-        """Test inline unique constraint."""
+        """Test inline unique constraint with valid name when creating a table."""
         sql = """
         CREATE TABLE public.person (
             person_id INT,
@@ -43,8 +43,8 @@ class TestUniqueConstraintRule:
         violations = [v for v in result.violations if v.rule_code() == "CR04"]
         assert len(violations) == 0
 
-    def test_add_unique_constraint(self, uc_linter):
-        """Test adding a unique constraint with ALTER TABLE."""
+    def test_add_unique_valid(self, uc_linter):
+        """Test that a valid unique constraint name passes when altering a table."""
         sql = """
         ALTER TABLE public.person
         ADD CONSTRAINT uc_person_email UNIQUE (email);
@@ -52,3 +52,14 @@ class TestUniqueConstraintRule:
         result = uc_linter.lint_string(sql)
         violations = [v for v in result.violations if v.rule_code() == "CR04"]
         assert len(violations) == 0
+
+    def test_add_unique_invalid(self, uc_linter):
+        """Test that an invalid unique constraint name fails when altering a table."""
+        sql = """
+        ALTER TABLE public.person
+        ADD CONSTRAINT unique_email UNIQUE (email);
+        """
+        result = uc_linter.lint_string(sql)
+        violations = [v for v in result.violations if v.rule_code() == "CR04"]
+        assert len(violations) == 1
+        assert "should start with 'uc_'" in violations[0].description.lower()

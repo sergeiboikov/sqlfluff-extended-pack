@@ -1,6 +1,6 @@
 """Rules for enforcing constraint naming conventions."""
 
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple
 
 from sqlfluff.core.rules import BaseRule, LintResult, RuleContext
 from sqlfluff.core.rules.crawlers import SegmentSeekerCrawler
@@ -52,6 +52,7 @@ class Rule_CR05(BaseRule):
     description = "Enforces named DEFAULT constraints to start with expected prefix."
     groups = ("all", "custom", "constraints")
     config_keywords = []  # Intentionally empty to bypass validation
+    # DEFAULT constraints can be part of column definitions, so we need to look at naked_identifier segments
     crawl_behaviour = SegmentSeekerCrawler({"naked_identifier", "object_reference"})
 
     # The expected prefix for DEFAULT constraint
@@ -69,23 +70,32 @@ class Rule_CR05(BaseRule):
 
         This rule only checks explicitly named DEFAULT constraints with the CONSTRAINT keyword.
         DEFAULT as a column property (without a name) is not checked.
-
-        In PostgreSQL, named DEFAULT constraints can appear in two ways:
-        1. In a column definition with CONSTRAINT keyword before DEFAULT
-        2. Using ALTER TABLE ... ADD CONSTRAINT ... DEFAULT ... FOR column
         """
         try:
             segment = context.segment
+            constraint_name = segment.raw.lower()
 
             # Check if this segment is a constraint name
             is_constraint_name, constraint_name = self._is_constraint_name(context)
 
             if is_constraint_name:
-                # Find if this is a DEFAULT constraint
-                is_default = self._is_constraint_type(context, ["DEFAULT"])
+                # Check for DEFAULT keyword after constraint name
+                parent = context.parent_stack[-1] if context.parent_stack else None
+                if parent:
+                    for i, child in enumerate(parent.segments):
+                        if child is segment:
+                            # Look ahead for DEFAULT keyword
+                            for j in range(i + 1, min(i + 10, len(parent.segments))):
+                                next_seg = parent.segments[j]
+                                if next_seg.is_type("keyword") and next_seg.raw.upper() == "DEFAULT":
+                                    if not constraint_name.startswith(self.expected_prefix):
+                                        return self._create_lint_result(segment, constraint_name, self.expected_prefix)
+                                    break
+                                elif not next_seg.is_type("whitespace") and not next_seg.is_type("type"):
+                                    # If we hit something other than whitespace or a type definition
+                                    # and it's not DEFAULT, this is not a DEFAULT constraint
+                                    break
 
-                if is_default and not constraint_name.startswith(self.expected_prefix):
-                    return self._create_lint_result(segment, constraint_name, self.expected_prefix)
             return None
         except Exception as e:
             self.logger.error(f"Exception in constraint naming rule: {str(e)}")
@@ -122,47 +132,6 @@ class Rule_CR05(BaseRule):
                     break
 
         return False, constraint_name
-
-    def _is_constraint_type(self, context: RuleContext, keywords: List[str]) -> bool:
-        """
-        Check if the constraint is of a specific type by looking for a sequence of keywords.
-
-        Args:
-            context: The rule context
-            keywords: List of keywords to look for in sequence
-
-        Returns:
-            bool: True if the constraint is of the specified type
-        """
-        segment = context.segment
-        parent = context.parent_stack[-1] if context.parent_stack else None
-
-        if not parent:
-            return False
-
-        for i, child in enumerate(parent.segments):
-            if child is segment:
-                # Found our segment, now look ahead for the specified keywords
-                idx = i + 1
-                max_lookahead = 10  # Reasonable distance for compressed SQL
-
-                # Search for the first keyword
-                first_keyword_found = False
-
-                while idx < len(parent.segments) and idx - i <= max_lookahead:
-                    next_seg = parent.segments[idx]
-
-                    if next_seg.is_type("keyword") and next_seg.raw.upper() == keywords[0]:
-                        first_keyword_found = True
-                        self.logger.debug("Found DEFAULT constraint")
-                        break
-
-                    idx += 1
-
-                # If we found the keyword
-                return first_keyword_found
-
-        return False
 
     def _create_lint_result(self, segment, constraint_name: str, expected_prefix: str) -> LintResult:
         """

@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/sergeiboikov/sqlfluff-extended-pack/actions/workflows/tests.yml/badge.svg)](https://github.com/sergeiboikov/sqlfluff-extended-pack/actions/workflows/tests.yml)
 
-A SQLFluff plugin to enforce constraint naming conventions according to the Postgres SQL Format Guidelines. The plugin validates objects to ensure they follow standardized naming patterns.
+A SQLFluff plugin to enforce constraint naming conventions according to the Postgres SQL Format Guidelines. The plugin validates objects to ensure they follow standardized naming patterns.1
 
 ## Rules Implemented
 
