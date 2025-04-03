@@ -39,8 +39,9 @@ def get_rules() -> List[Type[BaseRule]]:
     from custom_rules.constraints.CR03 import Rule_CR03
     from custom_rules.constraints.CR04 import Rule_CR04
     from custom_rules.constraints.CR05 import Rule_CR05
+    from custom_rules.functions.FN01 import Rule_FN01
 
     # Return the rules as a list
-    rules = [Rule_CR01, Rule_CR02, Rule_CR03, Rule_CR04, Rule_CR05]
+    rules = [Rule_CR01, Rule_CR02, Rule_CR03, Rule_CR04, Rule_CR05, Rule_FN01]
     print(f"Loaded {len(rules)} rules: {[r.code for r in rules]}")
     return rules
