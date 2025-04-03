@@ -91,3 +91,17 @@ def all_constraints_linter():
         "exclude_rules": ["all"]
     })
     return Linter(config=config)
+
+
+@pytest.fixture
+def fn_linter():
+    """Create a linter with the function naming rule enabled."""
+    config = FluffConfig(configs={
+        "core": {"dialect": "postgres"},
+        "rules": {
+            "FN01": {"enabled": True}
+        },
+        "include_rules": ["FN01"],
+        "exclude_rules": ["all"]
+    })
+    return Linter(config=config)
