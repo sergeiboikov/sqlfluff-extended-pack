@@ -36,7 +36,7 @@ class Rule_CR02(BaseRule):
     description = "Enforces FOREIGN KEY constraints to start with expected prefix."
     groups = ("all", "custom", "constraints")
     config_keywords = []  # Intentionally empty to bypass validation
-    crawl_behaviour = SegmentSeekerCrawler({'table_constraint'})
+    crawl_behaviour = SegmentSeekerCrawler({"table_constraint"})
 
     # The expected prefix for FOREIGN KEY constraint
     _DEFAULT_EXPECTED_PREFIX = "fk_"
@@ -51,11 +51,11 @@ class Rule_CR02(BaseRule):
         """Validate FOREIGN KEY constraint name prefixes."""
         try:
             segment = context.segment
-            constraint_name = segment.get_child('object_reference').raw
-            keywords = [keyword.raw.upper() for keyword in segment.get_children("keyword")]
+            constraint_name = segment.get_child("object_reference").raw
+            keywords = [keyword.raw for keyword in segment.get_children("keyword")]
 
             # Check if this is a FOREIGN KEY constraint
-            is_foreign_key = keywords.issubset(["FOREIGN", "KEY"])
+            is_foreign_key = {"FOREIGN", "KEY"}.issubset(keywords)
 
             if is_foreign_key and not constraint_name.lower().startswith(self.expected_prefix):
                 return self._create_lint_result(segment, constraint_name, self.expected_prefix)

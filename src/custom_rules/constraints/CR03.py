@@ -36,7 +36,7 @@ class Rule_CR03(BaseRule):
     description = "Enforces CHECK constraints to start with expected prefix."
     groups = ("all", "custom", "constraints")
     config_keywords = []  # Intentionally empty to bypass validation
-    crawl_behaviour = SegmentSeekerCrawler({'table_constraint'})
+    crawl_behaviour = SegmentSeekerCrawler({"table_constraint"})
 
     # The expected prefix for CHECK constraint
     _DEFAULT_EXPECTED_PREFIX = "chk_"
@@ -51,8 +51,8 @@ class Rule_CR03(BaseRule):
         """Validate CHECK constraint name prefixes."""
         try:
             segment = context.segment
-            constraint_name = segment.get_child('object_reference').raw
-            keywords = [keyword.raw.upper() for keyword in segment.get_children("keyword")]
+            constraint_name = segment.get_child("object_reference").raw
+            keywords = [keyword.raw for keyword in segment.get_children("keyword")]
 
             # Check if this is a CHECK constraint
             is_check = "CHECK" in keywords
