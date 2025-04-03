@@ -5,7 +5,7 @@ class TestAllConstraintRules:
     """Tests for all constraint naming rules together."""
 
     def test_all_valid_constraints(self, all_constraints_linter):
-        """Test all constraint types with valid names."""
+        """Test all constraint types with valid names when creating tables."""
         sql = """
         CREATE TABLE public.person (
             person_id INT,
@@ -29,7 +29,7 @@ class TestAllConstraintRules:
         assert len(violations) == 0
 
     def test_all_invalid_constraints(self, all_constraints_linter):
-        """Test all constraint types with invalid names."""
+        """Test all constraint types with invalid names when creating tables."""
         sql = """
         CREATE TABLE public.person (
             person_id INT,
@@ -96,7 +96,7 @@ class TestAllConstraintRules:
         assert len(violations) == 0
 
     def test_mixed_valid_invalid_constraints(self, all_constraints_linter):
-        """Test mix of valid and invalid constraint names."""
+        """Test mix of valid and invalid constraint names when creating tables."""
         sql = """
         CREATE TABLE public.person (
             person_id INT,
@@ -116,7 +116,7 @@ class TestAllConstraintRules:
         assert any("should start with 'df_'" in desc for desc in violation_descriptions)
 
     def test_mixed_constraints(self, all_constraints_linter):
-        """Test a mix of valid and invalid constraint names on various public schema tables."""
+        """Test a mix of valid and invalid constraint names on various tables."""
         sql = """
         CREATE TABLE public.department (
             dept_id INT,
@@ -156,10 +156,62 @@ class TestAllConstraintRules:
         assert len(violations) == 2  # Two invalid names
 
     def test_compact_style(self, all_constraints_linter):
-        """Test compact style SQL with constraints on public.person table."""
+        """Test compact style SQL with constraints."""
         sql = """
         CREATE TABLE public.person (person_id INT, CONSTRAINT person_pk PRIMARY KEY (person_id));
         """
         result = all_constraints_linter.lint_string(sql)
         violations = [v for v in result.violations if v.rule_code().startswith("CR0")]
         assert len(violations) == 1  # Invalid primary key name
+
+    def test_alter_table_all_valid_constraints(self, all_constraints_linter):
+        """Test all constraint types with valid names when altering tables."""
+        sql = """
+        CREATE TABLE public.person (person_id INT, email VARCHAR(255), age INT);
+
+        ALTER TABLE public.person
+        ADD CONSTRAINT pk_person PRIMARY KEY (person_id);
+
+        ALTER TABLE public.person
+        ADD CONSTRAINT uc_person_email UNIQUE (email);
+
+        ALTER TABLE public.person
+        ADD CONSTRAINT chk_person_age CHECK (age > 0);
+
+        CREATE TABLE public.orders (order_id INT, person_id INT);
+
+        ALTER TABLE public.orders
+        ADD CONSTRAINT pk_orders PRIMARY KEY (order_id);
+
+        ALTER TABLE public.orders
+        ADD CONSTRAINT fk_orders_person FOREIGN KEY (person_id) REFERENCES public.person(person_id);
+        """
+        result = all_constraints_linter.lint_string(sql)
+        violations = [v for v in result.violations if v.rule_code().startswith("CR0")]
+        assert len(violations) == 0
+
+    def test_alter_table_all_invalid_constraints(self, all_constraints_linter):
+        """Test all constraint types with invalid names when altering tables."""
+        sql = """
+        CREATE TABLE public.person (person_id INT, email VARCHAR(255), age INT);
+
+        ALTER TABLE public.person
+        ADD CONSTRAINT person_pk PRIMARY KEY (person_id);
+
+        ALTER TABLE public.person
+        ADD CONSTRAINT email_unique UNIQUE (email);
+
+        ALTER TABLE public.person
+        ADD CONSTRAINT age_check CHECK (age > 0);
+
+        CREATE TABLE public.orders (order_id INT, person_id INT);
+
+        ALTER TABLE public.orders
+        ADD CONSTRAINT orders_pk PRIMARY KEY (order_id);
+
+        ALTER TABLE public.orders
+        ADD CONSTRAINT orders_person_fk FOREIGN KEY (person_id) REFERENCES public.person(person_id);
+        """
+        result = all_constraints_linter.lint_string(sql)
+        violations = [v for v in result.violations if v.rule_code().startswith("CR0")]
+        assert len(violations) == 5  # All constraints have invalid names

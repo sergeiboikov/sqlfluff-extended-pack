@@ -5,7 +5,7 @@ class TestDefaultConstraintRule:
     """Tests for the default constraint naming rule (CR05)."""
 
     def test_default_constraint_valid(self, df_linter):
-        """Test that a valid default constraint name passes."""
+        """Test that a valid default constraint name passes when creating a table."""
         sql = """
         CREATE TABLE public.person (
             person_id INT,
@@ -17,7 +17,7 @@ class TestDefaultConstraintRule:
         assert len(violations) == 0
 
     def test_default_constraint_invalid(self, df_linter):
-        """Test that an invalid default constraint name fails."""
+        """Test that an invalid default constraint name fails when creating a table."""
         sql = """
         CREATE TABLE public.person (
             person_id INT,
