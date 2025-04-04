@@ -61,7 +61,7 @@ def test_real_world_examples(view_linter):
         SUM(oi.quantity * oi.unit_price) AS total_revenue
     FROM
         public.products AS p
-    JOIN
+    INNER JOIN
         public.categories AS c ON p.category_id = c.category_id
     LEFT JOIN
         public.order_items AS oi ON p.product_id = oi.product_id
