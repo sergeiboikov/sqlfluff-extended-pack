@@ -10,7 +10,7 @@ SELECT
     addresses.city
 FROM
     public.users
-JOIN
+INNER JOIN
     public.addresses ON users.id = addresses.user_id;
 
 -- View with correct naming (does not violate VW01)
@@ -23,5 +23,5 @@ SELECT
     addresses.city
 FROM
     public.users
-JOIN
+INNER JOIN
     public.addresses ON users.id = addresses.user_id;
