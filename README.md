@@ -1,8 +1,17 @@
-# SQLFluff Constraint Naming Plugin
+# SQLFluff Extended Pack
 
 [![Tests](https://github.com/sergeiboikov/sqlfluff-extended-pack/actions/workflows/tests.yml/badge.svg)](https://github.com/sergeiboikov/sqlfluff-extended-pack/actions/workflows/tests.yml)
 
-A SQLFluff plugin to enforce constraint naming conventions according to the Postgres SQL Format Guidelines. The plugin validates objects to ensure they follow standardized naming patterns.1
+A SQLFluff plugin to enforce SQL naming conventions and best practices according to the Postgres SQL Format Guidelines. The plugin validates objects to ensure they follow standardized naming patterns for constraints, functions, and views.
+
+## Quick Installation
+
+```bash
+# Install directly from GitHub
+pip install git+https://github.com/sergeiboikov/sqlfluff-extended-pack.git@v0.2.0
+```
+
+For detailed installation instructions, see the [Installation](#installation) section below.
 
 ## Rules Implemented
 
@@ -45,15 +54,32 @@ This plugin requires Python 3.8 or newer. It has been tested with the following 
 
 ## Installation
 
-1. Clone the repository.
+You have two options for installing this plugin:
 
-2. Install the plugin:
+### 1. Install from GitHub
+
+Install the plugin directly from GitHub:
 
 ```bash
-# Navigate to the plugin directory
-cd /path/to/sqlfluff-extended-pack
+# Install the latest version
+pip install git+https://github.com/sergeiboikov/sqlfluff-extended-pack.git
 
-# Install the plugin in development mode
+# Install a specific version
+pip install git+https://github.com/sergeiboikov/sqlfluff-extended-pack.git@v0.2.0
+```
+
+### 2. Install for Development
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/sergeiboikov/sqlfluff-extended-pack.git
+cd sqlfluff-extended-pack
+```
+
+2. Install the plugin in development mode:
+
+```bash
 pip install -e .
 ```
 
