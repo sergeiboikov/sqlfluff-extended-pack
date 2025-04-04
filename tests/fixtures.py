@@ -91,3 +91,46 @@ def all_constraints_linter():
         "exclude_rules": ["all"]
     })
     return Linter(config=config)
+
+
+@pytest.fixture
+def fn_linter():
+    """Create a linter with the function naming rule enabled."""
+    config = FluffConfig(configs={
+        "core": {"dialect": "postgres"},
+        "rules": {
+            "FN01": {"enabled": True}
+        },
+        "include_rules": ["FN01"],
+        "exclude_rules": ["all"]
+    })
+    return Linter(config=config)
+
+
+@pytest.fixture
+def fn_param_linter():
+    """Create a linter with the function parameter naming rule enabled."""
+    config = FluffConfig(configs={
+        "core": {"dialect": "postgres"},
+        "rules": {
+            "FN02": {"enabled": True}
+        },
+        "include_rules": ["FN02"],
+        "exclude_rules": ["all"]
+    })
+    return Linter(config=config)
+
+
+@pytest.fixture
+def all_functions_linter():
+    """Create a linter with all function rules enabled."""
+    config = FluffConfig(configs={
+        "core": {"dialect": "postgres"},
+        "rules": {
+            "FN01": {"enabled": True},
+            "FN02": {"enabled": True}
+        },
+        "include_rules": ["FN01", "FN02"],
+        "exclude_rules": ["all"]
+    })
+    return Linter(config=config)

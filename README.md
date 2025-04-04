@@ -14,6 +14,13 @@ This plugin implements the following constraint naming rules:
 - **CR04** - UNIQUE constraints should use `uc_` prefix
 - **CR05** - DEFAULT constraints should use `df_` prefix. This rule checks explicitly named DEFAULT constraints with the CONSTRAINT keyword. DEFAULT as a column property (without a name) is not checked.
 
+### Function Naming Rules
+
+This plugin also implements the following function naming rules:
+
+- **FN01** - Functions should use `fun_` prefix
+- **FN02** - Function parameters should use `p_` prefix
+
 ## Requirements
 
 ### Python Compatibility
@@ -54,14 +61,14 @@ You should see all the custom rules listed among the available rules.
 
 ## Configuration
 
-You can customize the expected prefixes for each constraint type by creating a `.sqlfluff` configuration file:
+You can customize the expected prefixes for each constraint type and function naming by creating a `.sqlfluff` configuration file:
 
 ```ini
 [sqlfluff]
 dialect = postgres
 
 [sqlfluff:rules]
-rule_allowlist = CR01, CR02, CR03, CR04, CR05
+rule_allowlist = CR01, CR02, CR03, CR04, CR05, FN01, FN02
 
 [sqlfluff:rules:constraints.pk_constraint_naming]
 # For PRIMARY KEY constraints
@@ -82,6 +89,14 @@ expected_prefix = uc_
 [sqlfluff:rules:constraints.df_constraint_naming]
 # For DEFAULT constraints
 expected_prefix = df_
+
+[sqlfluff:rules:functions.function_naming]
+# For function names
+expected_prefix = fun_
+
+[sqlfluff:rules:functions.function_parameter_naming]
+# For function parameters
+expected_prefix = p_
 ```
 
 If you don't specify prefixes in your configuration, the plugin will use the default prefixes shown above.
@@ -192,4 +207,24 @@ The following SQL would pass validation:
 CREATE TABLE public.person (person_id INT, CONSTRAINT pk_person PRIMARY KEY (person_id)); -- Correctly named PRIMARY KEY constraint
 
 ALTER TABLE public.person ADD CONSTRAINT uc_person_email UNIQUE (email); -- Correctly named UNIQUE constraint
+```
+
+### Incorrect function naming:
+
+```sql
+CREATE FUNCTION public.calculate_tax(amount NUMERIC) RETURNS NUMERIC AS $$
+BEGIN
+    RETURN amount * 0.2;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### Correct function naming:
+
+```sql
+CREATE FUNCTION public.fun_calculate_tax(p_amount NUMERIC) RETURNS NUMERIC AS $$
+BEGIN
+    RETURN p_amount * 0.2;
+END;
+$$ LANGUAGE plpgsql;
 ```

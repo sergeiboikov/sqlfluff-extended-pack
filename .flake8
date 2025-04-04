@@ -12,5 +12,7 @@ ignore =
     # D403: first line should end with a period
     D403,
     # D415: section should end with a period
-    D415
+    D415,
+    # W504: line break after binary operator
+    W504
 max-line-length = 160
