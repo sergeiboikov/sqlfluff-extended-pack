@@ -36,3 +36,8 @@ expected_prefix = fun_
 # Good: CREATE OR REPLACE FUNCTION public.fun_get_user_by_id(p_user_id INT)
 # Bad: CREATE OR REPLACE FUNCTION public.fun_get_user_by_id(user_id INT)
 expected_prefix = p_
+
+[sqlfluff:rules:views.view_naming]
+# Good: CREATE VIEW public.v_user_stats
+# Bad: CREATE VIEW public.user_stats
+expected_prefix = v_

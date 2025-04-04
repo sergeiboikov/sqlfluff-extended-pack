@@ -21,6 +21,12 @@ This plugin also implements the following function naming rules:
 - **FN01** - Functions should use `fun_` prefix
 - **FN02** - Function parameters should use `p_` prefix
 
+### View Naming Rules
+
+This plugin also implements the following view naming rules:
+
+- **VW01** - Views should use `v_` prefix
+
 ## Requirements
 
 ### Python Compatibility
@@ -68,7 +74,7 @@ You can customize the expected prefixes for each constraint type and function na
 dialect = postgres
 
 [sqlfluff:rules]
-rule_allowlist = CR01, CR02, CR03, CR04, CR05, FN01, FN02
+rule_allowlist = CR01, CR02, CR03, CR04, CR05, FN01, FN02, VW01
 
 [sqlfluff:rules:constraints.pk_constraint_naming]
 # For PRIMARY KEY constraints
@@ -97,6 +103,10 @@ expected_prefix = fun_
 [sqlfluff:rules:functions.function_parameter_naming]
 # For function parameters
 expected_prefix = p_
+
+[sqlfluff:rules:views.view_naming]
+# For view names
+expected_prefix = v_
 ```
 
 If you don't specify prefixes in your configuration, the plugin will use the default prefixes shown above.
@@ -127,6 +137,15 @@ expected_prefix = uc_
 
 [sqlfluff:rules:constraints.df_constraint_naming]
 expected_prefix = df_
+
+[sqlfluff:rules:functions.function_naming]
+expected_prefix = fun_
+
+[sqlfluff:rules:functions.function_parameter_naming]
+expected_prefix = p_
+
+[sqlfluff:rules:views.view_naming]
+expected_prefix = v_
 ```
 
 ## Usage
@@ -140,6 +159,12 @@ sqlfluff lint tests/test_constraints.sql --config .sqlfluff
 
 # Lint using a specific constraint rule
 sqlfluff lint tests/test_constraints.sql --config .sqlfluff --rules CR01
+
+# Lint using function naming rules
+sqlfluff lint tests/test_functions.sql --config .sqlfluff --rules FN01,FN02
+
+# Lint using view naming rules
+sqlfluff lint tests/test_views.sql --config .sqlfluff --rules VW01
 
 # Generate detailed debug output
 sqlfluff lint tests/test_constraints.sql --config .sqlfluff --rules CR01 -vvvv > debug.log
@@ -227,4 +252,28 @@ BEGIN
     RETURN p_amount * 0.2;
 END;
 $$ LANGUAGE plpgsql;
+```
+
+### Incorrect view naming:
+
+```sql
+CREATE OR REPLACE VIEW public.user_details AS
+SELECT
+    users.id,
+    users.name,
+    users.email
+FROM
+    public.users;
+```
+
+### Correct view naming:
+
+```sql
+CREATE OR REPLACE VIEW public.v_user_details AS
+SELECT
+    users.id,
+    users.name,
+    users.email
+FROM
+    public.users;
 ```
