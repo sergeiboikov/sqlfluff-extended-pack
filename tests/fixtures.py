@@ -134,3 +134,31 @@ def all_functions_linter():
         "exclude_rules": ["all"]
     })
     return Linter(config=config)
+
+
+@pytest.fixture
+def view_linter():
+    """Create a linter with the view naming rule enabled."""
+    config = FluffConfig(configs={
+        "core": {"dialect": "postgres"},
+        "rules": {
+            "VW01": {"enabled": True}
+        },
+        "include_rules": ["VW01"],
+        "exclude_rules": ["all"]
+    })
+    return Linter(config=config)
+
+
+@pytest.fixture
+def all_views_linter():
+    """Create a linter with all view rules enabled."""
+    config = FluffConfig(configs={
+        "core": {"dialect": "postgres"},
+        "rules": {
+            "VW01": {"enabled": True}
+        },
+        "include_rules": ["VW01"],
+        "exclude_rules": ["all"]
+    })
+    return Linter(config=config)
