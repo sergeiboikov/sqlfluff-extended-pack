@@ -1,27 +1,38 @@
 # Changelog
 
-All notable changes to the SQLFluff Constraint Naming Plugin will be documented in this file.
+All notable changes to the SQLFluff Extended Pack project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.0] - 2025-04-04
 
 ### Added
-- Future changes will be documented here
 
-## [0.1.0] - 2024-05-01
+- Function naming rules:
+  - **FN01**: Functions should use the `fun_` prefix
+  - **FN02**: Function parameters should use the `p_` prefix
+- View naming rules:
+  - **VW01**: Views (including materialized views) should use the `v_` prefix
+- Expanded test coverage for all rules
+- Support for materialized views in VW01
+
+### Changed
+
+- Updated documentation to include function and view naming rules
+- Updated configuration examples in README
+
+## [0.1.0] - 2025-04-02
 
 ### Added
-- Initial release of the SQLFluff Constraint Naming Plugin
-- Rule CR01: PRIMARY KEY constraints should use `pk_` prefix
-- Rule CR02: FOREIGN KEY constraints should use `fk_` prefix
-- Rule CR03: CHECK constraints should use `chk_` prefix
-- Rule CR04: UNIQUE constraints should use `uc_` prefix
-- Rule CR05: DEFAULT constraints should use `df_` prefix (only for named constraints)
-- Documentation in README.md
-- Configuration options for customizing constraint prefixes
-- Test suite for all rules
+
+- Initial release
+- Constraint naming rules:
+  - **CR01**: PRIMARY KEY constraints should use the `pk_` prefix
+  - **CR02**: FOREIGN KEY constraints should use the `fk_` prefix
+  - **CR03**: CHECK constraints should use the `chk_` prefix
+  - **CR04**: UNIQUE constraints should use the `uc_` prefix
+  - **CR05**: DEFAULT constraints should use the `df_` prefix
 
 ### Fixed
 - CR05 rule properly handles DEFAULT constraints only when using the CONSTRAINT keyword

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sqlfluff-extended-pack"
-version = "0.1.0"
+version = "0.2.0"
 description = "A SQLFluff plugin for extended rules"
 authors = [{name = "Sergey Boykov", email = "boikov.sa@yandex.ru"}]
 license = {text = "MIT"}
@@ -31,7 +31,7 @@ Homepage = "https://github.com/sergeiboikov/sqlfluff-extended-pack"
 [tool.setuptools]
 package-dir = {"" = "src"}
 # Explicitly list all packages to avoid registration conflicts
-packages = ["custom_rules", "custom_rules.constraints"]
+packages = ["custom_rules", "custom_rules.constraints", "custom_rules.functions", "custom_rules.views"]
 
 [dependency-groups]
 dev = [

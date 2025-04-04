@@ -1,8 +1,17 @@
-# SQLFluff Constraint Naming Plugin
+# SQLFluff Extended Pack
 
 [![Tests](https://github.com/sergeiboikov/sqlfluff-extended-pack/actions/workflows/tests.yml/badge.svg)](https://github.com/sergeiboikov/sqlfluff-extended-pack/actions/workflows/tests.yml)
 
-A SQLFluff plugin to enforce constraint naming conventions according to the Postgres SQL Format Guidelines. The plugin validates objects to ensure they follow standardized naming patterns.1
+A SQLFluff plugin to enforce SQL naming conventions and best practices according to the Postgres SQL Format Guidelines. The plugin validates objects to ensure they follow standardized naming patterns for constraints, functions, and views.
+
+## Quick Installation
+
+```bash
+# Install directly from GitHub
+pip install git+https://github.com/sergeiboikov/sqlfluff-extended-pack.git@v0.2.0
+```
+
+For detailed installation instructions, see the [Installation](#installation) section below.
 
 ## Rules Implemented
 
@@ -13,6 +22,19 @@ This plugin implements the following constraint naming rules:
 - **CR03** - CHECK constraints should use `chk_` prefix
 - **CR04** - UNIQUE constraints should use `uc_` prefix
 - **CR05** - DEFAULT constraints should use `df_` prefix. This rule checks explicitly named DEFAULT constraints with the CONSTRAINT keyword. DEFAULT as a column property (without a name) is not checked.
+
+### Function Naming Rules
+
+This plugin also implements the following function naming rules:
+
+- **FN01** - Functions should use `fun_` prefix
+- **FN02** - Function parameters should use `p_` prefix
+
+### View Naming Rules
+
+This plugin also implements the following view naming rules:
+
+- **VW01** - Views should use `v_` prefix
 
 ## Requirements
 
@@ -32,15 +54,32 @@ This plugin requires Python 3.8 or newer. It has been tested with the following 
 
 ## Installation
 
-1. Clone the repository.
+You have two options for installing this plugin:
 
-2. Install the plugin:
+### 1. Install from GitHub
+
+Install the plugin directly from GitHub:
 
 ```bash
-# Navigate to the plugin directory
-cd /path/to/sqlfluff-extended-pack
+# Install the latest version
+pip install git+https://github.com/sergeiboikov/sqlfluff-extended-pack.git
 
-# Install the plugin in development mode
+# Install a specific version
+pip install git+https://github.com/sergeiboikov/sqlfluff-extended-pack.git@v0.2.0
+```
+
+### 2. Install for Development
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/sergeiboikov/sqlfluff-extended-pack.git
+cd sqlfluff-extended-pack
+```
+
+2. Install the plugin in development mode:
+
+```bash
 pip install -e .
 ```
 
@@ -54,14 +93,14 @@ You should see all the custom rules listed among the available rules.
 
 ## Configuration
 
-You can customize the expected prefixes for each constraint type by creating a `.sqlfluff` configuration file:
+You can customize the expected prefixes for each constraint type and function naming by creating a `.sqlfluff` configuration file:
 
 ```ini
 [sqlfluff]
 dialect = postgres
 
 [sqlfluff:rules]
-rule_allowlist = CR01, CR02, CR03, CR04, CR05
+rule_allowlist = CR01, CR02, CR03, CR04, CR05, FN01, FN02, VW01
 
 [sqlfluff:rules:constraints.pk_constraint_naming]
 # For PRIMARY KEY constraints
@@ -82,6 +121,18 @@ expected_prefix = uc_
 [sqlfluff:rules:constraints.df_constraint_naming]
 # For DEFAULT constraints
 expected_prefix = df_
+
+[sqlfluff:rules:functions.function_naming]
+# For function names
+expected_prefix = fun_
+
+[sqlfluff:rules:functions.function_parameter_naming]
+# For function parameters
+expected_prefix = p_
+
+[sqlfluff:rules:views.view_naming]
+# For view names
+expected_prefix = v_
 ```
 
 If you don't specify prefixes in your configuration, the plugin will use the default prefixes shown above.
@@ -112,6 +163,15 @@ expected_prefix = uc_
 
 [sqlfluff:rules:constraints.df_constraint_naming]
 expected_prefix = df_
+
+[sqlfluff:rules:functions.function_naming]
+expected_prefix = fun_
+
+[sqlfluff:rules:functions.function_parameter_naming]
+expected_prefix = p_
+
+[sqlfluff:rules:views.view_naming]
+expected_prefix = v_
 ```
 
 ## Usage
@@ -125,6 +185,12 @@ sqlfluff lint tests/test_constraints.sql --config .sqlfluff
 
 # Lint using a specific constraint rule
 sqlfluff lint tests/test_constraints.sql --config .sqlfluff --rules CR01
+
+# Lint using function naming rules
+sqlfluff lint tests/test_functions.sql --config .sqlfluff --rules FN01,FN02
+
+# Lint using view naming rules
+sqlfluff lint tests/test_views.sql --config .sqlfluff --rules VW01
 
 # Generate detailed debug output
 sqlfluff lint tests/test_constraints.sql --config .sqlfluff --rules CR01 -vvvv > debug.log
@@ -192,4 +258,48 @@ The following SQL would pass validation:
 CREATE TABLE public.person (person_id INT, CONSTRAINT pk_person PRIMARY KEY (person_id)); -- Correctly named PRIMARY KEY constraint
 
 ALTER TABLE public.person ADD CONSTRAINT uc_person_email UNIQUE (email); -- Correctly named UNIQUE constraint
+```
+
+### Incorrect function naming:
+
+```sql
+CREATE FUNCTION public.calculate_tax(amount NUMERIC) RETURNS NUMERIC AS $$
+BEGIN
+    RETURN amount * 0.2;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### Correct function naming:
+
+```sql
+CREATE FUNCTION public.fun_calculate_tax(p_amount NUMERIC) RETURNS NUMERIC AS $$
+BEGIN
+    RETURN p_amount * 0.2;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### Incorrect view naming:
+
+```sql
+CREATE OR REPLACE VIEW public.user_details AS
+SELECT
+    users.id,
+    users.name,
+    users.email
+FROM
+    public.users;
+```
+
+### Correct view naming:
+
+```sql
+CREATE OR REPLACE VIEW public.v_user_details AS
+SELECT
+    users.id,
+    users.name,
+    users.email
+FROM
+    public.users;
 ```

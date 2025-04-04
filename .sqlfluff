@@ -2,9 +2,6 @@
 dialect = postgres
 max_line_length = 160
 
-[sqlfluff:rules]
-rule_allowlist = CR01, CR02, CR03, CR04, CR05
-
 [sqlfluff:rules:constraints.pk_constraint_naming]
 # Good: CONSTRAINT pk_person PRIMARY KEY (person_id)
 # Bad: CONSTRAINT person_pk PRIMARY KEY (person_id)
@@ -29,3 +26,18 @@ expected_prefix = uc_
 # Good: CONSTRAINT df_person_active DEFAULT (TRUE) FOR is_active
 # Bad: CONSTRAINT active_default DEFAULT (TRUE) FOR is_active
 expected_prefix = df_
+
+[sqlfluff:rules:functions.function_naming]
+# Good: CREATE OR REPLACE FUNCTION public.fun_get_user_by_id(user_id INT)
+# Bad: CREATE OR REPLACE FUNCTION public.get_user_by_id(user_id INT)
+expected_prefix = fun_
+
+[sqlfluff:rules:functions.function_parameter_naming]
+# Good: CREATE OR REPLACE FUNCTION public.fun_get_user_by_id(p_user_id INT)
+# Bad: CREATE OR REPLACE FUNCTION public.fun_get_user_by_id(user_id INT)
+expected_prefix = p_
+
+[sqlfluff:rules:views.view_naming]
+# Good: CREATE VIEW public.v_user_stats
+# Bad: CREATE VIEW public.user_stats
+expected_prefix = v_
