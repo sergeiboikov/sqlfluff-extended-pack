@@ -11,7 +11,7 @@ class TestFunctionNamingRule:
         RETURNS JSON
         LANGUAGE SQL
         AS $$
-            SELECT * FROM configuration
+            SELECT * FROM public.configuration
         $$;
         """
         result = fn_linter.lint_string(sql)
@@ -25,7 +25,7 @@ class TestFunctionNamingRule:
         RETURNS JSON
         LANGUAGE SQL
         AS $$
-            SELECT * FROM configuration
+            SELECT * FROM public.configuration
         $$;
         """
         result = fn_linter.lint_string(sql)
@@ -44,7 +44,7 @@ class TestFunctionNamingRule:
         )
         LANGUAGE SQL
         AS $$
-            SELECT id, name, email FROM users WHERE id = user_id
+            SELECT id, name, email FROM public.users WHERE id = user_id
         $$;
         """
         result = fn_linter.lint_string(sql)
@@ -62,7 +62,7 @@ class TestFunctionNamingRule:
         )
         LANGUAGE SQL
         AS $$
-            SELECT id, name, email FROM users WHERE id = user_id
+            SELECT id, name, email FROM public.users WHERE id = user_id
         $$;
         """
         result = fn_linter.lint_string(sql)
