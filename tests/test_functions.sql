@@ -7,7 +7,7 @@ RETURNS TABLE (
     name TEXT,
     email TEXT
 )
-LANGUAGE SQL
+LANGUAGE sql
 AS $$
     SELECT id, name, email FROM users WHERE id = user_id
 $$;
@@ -19,7 +19,7 @@ RETURNS TABLE (
     name TEXT,
     email TEXT
 )
-LANGUAGE SQL
+LANGUAGE sql
 AS $$
     SELECT id, name, email FROM users WHERE id = user_id
 $$;

@@ -45,7 +45,9 @@ class Rule_CR04(BaseRule):
         """Initialize the rule with configuration."""
         super().__init__(code=code, description=description, **kwargs)
         # Set default expected_prefix if not provided
-        self.expected_prefix = kwargs.get("expected_prefix", self._DEFAULT_EXPECTED_PREFIX)
+        self.expected_prefix = kwargs.get(
+            "expected_prefix", self._DEFAULT_EXPECTED_PREFIX
+        )
 
     def _eval(self, context: RuleContext) -> Optional[LintResult]:
         """Validate UNIQUE constraint name prefixes."""
@@ -57,14 +59,20 @@ class Rule_CR04(BaseRule):
             # Check if this is a UNIQUE constraint
             is_unique = "UNIQUE" in keywords
 
-            if is_unique and not constraint_name.lower().startswith(self.expected_prefix):
-                return self._create_lint_result(segment, constraint_name, self.expected_prefix)
+            if is_unique and not constraint_name.lower().startswith(
+                self.expected_prefix
+            ):
+                return self._create_lint_result(
+                    segment, constraint_name, self.expected_prefix
+                )
             return None
         except Exception as e:
             self.logger.error(f"Exception in constraint naming rule: {str(e)}")
             return None
 
-    def _create_lint_result(self, segment, constraint_name: str, expected_prefix: str) -> LintResult:
+    def _create_lint_result(
+        self, segment, constraint_name: str, expected_prefix: str
+    ) -> LintResult:
         """
         Create a lint result for a constraint naming violation.
 
@@ -76,11 +84,13 @@ class Rule_CR04(BaseRule):
         Returns:
             LintResult: The lint result object
         """
-        self.logger.debug(f"UNIQUE constraint name '{constraint_name}' violates naming convention")
+        self.logger.debug(
+            f"UNIQUE constraint name '{constraint_name}' violates naming convention"
+        )
         return LintResult(
             anchor=segment,
             description=(
                 f"UNIQUE constraint name '{constraint_name}' should start with "
                 f"'{expected_prefix}'."
-            )
+            ),
         )
