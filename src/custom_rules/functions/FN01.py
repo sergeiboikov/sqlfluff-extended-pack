@@ -28,7 +28,9 @@ class Rule_FN01(BaseRule):
     description = "Enforces function names to start with expected prefix."
     groups = ("all", "custom", "functions")
     config_keywords = []  # Intentionally empty to bypass validation
-    crawl_behaviour = SegmentSeekerCrawler({"function_definition", "create_function_statement"})
+    crawl_behaviour = SegmentSeekerCrawler(
+        {"function_definition", "create_function_statement"}
+    )
 
     # The expected prefix for function names
     _DEFAULT_EXPECTED_PREFIX = "fun_"
@@ -37,7 +39,9 @@ class Rule_FN01(BaseRule):
         """Initialize the rule with configuration."""
         super().__init__(code=code, description=description, **kwargs)
         # Set default expected_prefix if not provided
-        self.expected_prefix = kwargs.get("expected_prefix", self._DEFAULT_EXPECTED_PREFIX)
+        self.expected_prefix = kwargs.get(
+            "expected_prefix", self._DEFAULT_EXPECTED_PREFIX
+        )
 
     def _eval(self, context: RuleContext) -> Optional[LintResult]:
         """Validate function names."""
@@ -54,8 +58,12 @@ class Rule_FN01(BaseRule):
                     function_name = parts[-1]
 
                 if not function_name.lower().startswith(self.expected_prefix):
-                    self.logger.debug(f"Function name violates naming convention: {function_name}")
-                    return self._create_lint_result(segment, function_name, self.expected_prefix)
+                    self.logger.debug(
+                        f"Function name violates naming convention: {function_name}"
+                    )
+                    return self._create_lint_result(
+                        segment, function_name, self.expected_prefix
+                    )
 
             return None
         except Exception as e:
@@ -92,7 +100,9 @@ class Rule_FN01(BaseRule):
 
         if create_func_idx is not None and create_func_idx + 1 < len(segment.segments):
             # Try to find the function name after the FUNCTION keyword
-            for i in range(create_func_idx + 1, min(create_func_idx + 5, len(segment.segments))):
+            for i in range(
+                create_func_idx + 1, min(create_func_idx + 5, len(segment.segments))
+            ):
                 child = segment.segments[i]
                 if not child.is_type("whitespace") and not child.is_type("comment"):
                     # This is likely the function name or schema.function_name
@@ -100,7 +110,9 @@ class Rule_FN01(BaseRule):
 
         return None
 
-    def _create_lint_result(self, segment, function_name: str, expected_prefix: str) -> LintResult:
+    def _create_lint_result(
+        self, segment, function_name: str, expected_prefix: str
+    ) -> LintResult:
         """
         Create a lint result for a function naming violation.
 
@@ -118,5 +130,5 @@ class Rule_FN01(BaseRule):
             description=(
                 f"Function name '{function_name}' should start with "
                 f"'{expected_prefix}'."
-            )
+            ),
         )

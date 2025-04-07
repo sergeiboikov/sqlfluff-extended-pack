@@ -28,7 +28,9 @@ class Rule_VW01(BaseRule):
     description = "Enforces view names to start with expected prefix."
     groups = ("all", "custom", "views")
     config_keywords = []  # Intentionally empty to bypass validation
-    crawl_behaviour = SegmentSeekerCrawler({"create_view_statement", "create_materialized_view_statement"})
+    crawl_behaviour = SegmentSeekerCrawler(
+        {"create_view_statement", "create_materialized_view_statement"}
+    )
 
     # The expected prefix for view names
     _DEFAULT_EXPECTED_PREFIX = "v_"
@@ -37,7 +39,9 @@ class Rule_VW01(BaseRule):
         """Initialize the rule with configuration."""
         super().__init__(code=code, description=description, **kwargs)
         # Set default expected_prefix if not provided
-        self.expected_prefix = kwargs.get("expected_prefix", self._DEFAULT_EXPECTED_PREFIX)
+        self.expected_prefix = kwargs.get(
+            "expected_prefix", self._DEFAULT_EXPECTED_PREFIX
+        )
 
     def _eval(self, context: RuleContext) -> Optional[LintResult]:
         """Validate view names."""
@@ -54,8 +58,12 @@ class Rule_VW01(BaseRule):
                     view_name = parts[-1]
 
                 if not view_name.lower().startswith(self.expected_prefix):
-                    self.logger.debug(f"View name violates naming convention: {view_name}")
-                    return self._create_lint_result(segment, view_name, self.expected_prefix)
+                    self.logger.debug(
+                        f"View name violates naming convention: {view_name}"
+                    )
+                    return self._create_lint_result(
+                        segment, view_name, self.expected_prefix
+                    )
 
             return None
         except Exception as e:
@@ -86,21 +94,28 @@ class Rule_VW01(BaseRule):
         # Look for segments after CREATE [OR REPLACE] VIEW or CREATE MATERIALIZED VIEW keywords
         create_view_idx = None
         for i, child in enumerate(segment.segments):
-            if child.is_type("keyword") and child.raw.upper() in ["VIEW", "MATERIALIZED"]:
+            if child.is_type("keyword") and child.raw.upper() in [
+                "VIEW",
+                "MATERIALIZED",
+            ]:
                 # For "VIEW", it could be directly after CREATE
                 # For "MATERIALIZED", the next keyword should be "VIEW"
                 if child.raw.upper() == "VIEW":
                     create_view_idx = i
                     break
-                elif (i + 1 < len(segment.segments) and
-                      segment.segments[i + 1].is_type("keyword") and
-                      segment.segments[i + 1].raw.upper() == "VIEW"):
+                elif (
+                    i + 1 < len(segment.segments)
+                    and segment.segments[i + 1].is_type("keyword")
+                    and segment.segments[i + 1].raw.upper() == "VIEW"
+                ):
                     create_view_idx = i + 1  # Set to the VIEW keyword position
                     break
 
         if create_view_idx is not None and create_view_idx + 1 < len(segment.segments):
             # Try to find the view name after the VIEW keyword
-            for i in range(create_view_idx + 1, min(create_view_idx + 5, len(segment.segments))):
+            for i in range(
+                create_view_idx + 1, min(create_view_idx + 5, len(segment.segments))
+            ):
                 child = segment.segments[i]
                 if not child.is_type("whitespace") and not child.is_type("comment"):
                     # This is likely the view name or schema.view_name
@@ -108,7 +123,9 @@ class Rule_VW01(BaseRule):
 
         return None
 
-    def _create_lint_result(self, segment, view_name: str, expected_prefix: str) -> LintResult:
+    def _create_lint_result(
+        self, segment, view_name: str, expected_prefix: str
+    ) -> LintResult:
         """
         Create a lint result for a view naming violation.
 
@@ -124,7 +141,6 @@ class Rule_VW01(BaseRule):
         return LintResult(
             anchor=segment,
             description=(
-                f"View name '{view_name}' should start with "
-                f"'{expected_prefix}'."
-            )
+                f"View name '{view_name}' should start with " f"'{expected_prefix}'."
+            ),
         )
