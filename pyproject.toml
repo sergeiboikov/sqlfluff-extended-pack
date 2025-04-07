@@ -6,37 +6,68 @@ build-backend = "setuptools.build_meta"
 name = "sqlfluff-extended-pack"
 version = "0.2.0"
 description = "A SQLFluff plugin for extended rules"
-authors = [{name = "Sergey Boykov", email = "boikov.sa@yandex.ru"}]
+authors = [
+    {name = "Sergey Boykov", email = "boikov.sa@yandex.ru"}
+]
 license = {text = "MIT"}
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
     "pre-commit>=3.5.0",
-    "sqlfluff>=3.3.1",
-]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "License :: OSI Approved :: MIT License",
+    "sqlfluff>=3.3.1"
 ]
 
 [project.urls]
 Homepage = "https://github.com/sergeiboikov/sqlfluff-extended-pack"
 
+[project.optional-dependencies]
+dev = [
+    "codespell>=2.4.1",
+    "pre-commit>=4.2.0",
+    "sqlfluff>=3.3.1",
+    "ruff>=0.11.4",
+    "yamllint>=1.37.0"
+]
+
 [tool.setuptools]
 package-dir = {"" = "src"}
-# Explicitly list all packages to avoid registration conflicts
-packages = ["custom_rules", "custom_rules.constraints", "custom_rules.functions", "custom_rules.views"]
-
-[dependency-groups]
-dev = [
-    "flake8>=5.0.4",
+packages = [
+    "custom_rules",
+    "custom_rules.constraints",
+    "custom_rules.functions",
+    "custom_rules.views"
 ]
+
+[tool.ruff]
+exclude = [
+    ".venv",
+    ".vscode",
+    "site-packages",
+    "venv"
+]
+line-length = 120
+indent-width = 4
+
+[tool.ruff.lint]
+# D105: Missing docstring in magic method
+# D107: Missing docstring in __init__
+# D400 First line should end with a period
+# D401: First line should be in imperative mood
+# D403: First line should end with a period
+# D415: Section should end with a period
+# D418: Function/ Method decorated with @overload shouldn't contain a docstring
+ignore = ["D105", "D107", "D400", "D401", "D403", "D415", "D418"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.codespell]
+# The configuration must be kept here to ensure that
+# `codespell` can be run as a standalone program from the CLI
+# with the appropriate default options.
+skip = "*/pyproject.toml"
+quiet-level = 2
+ignore-words-list = ""
 
 # Register the plugin entry point directly to custom_rules
 [project.entry-points.sqlfluff]
