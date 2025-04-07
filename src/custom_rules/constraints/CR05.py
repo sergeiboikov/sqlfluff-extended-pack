@@ -62,7 +62,9 @@ class Rule_CR05(BaseRule):
         """Initialize the rule with configuration."""
         super().__init__(code=code, description=description, **kwargs)
         # Set default expected_prefix if not provided
-        self.expected_prefix = kwargs.get("expected_prefix", self._DEFAULT_EXPECTED_PREFIX)
+        self.expected_prefix = kwargs.get(
+            "expected_prefix", self._DEFAULT_EXPECTED_PREFIX
+        )
 
     def _eval(self, context: RuleContext) -> Optional[LintResult]:
         """
@@ -87,11 +89,22 @@ class Rule_CR05(BaseRule):
                             # Look ahead for DEFAULT keyword
                             for j in range(i + 1, min(i + 10, len(parent.segments))):
                                 next_seg = parent.segments[j]
-                                if next_seg.is_type("keyword") and next_seg.raw.upper() == "DEFAULT":
-                                    if not constraint_name.startswith(self.expected_prefix):
-                                        return self._create_lint_result(segment, constraint_name, self.expected_prefix)
+                                if (
+                                    next_seg.is_type("keyword")
+                                    and next_seg.raw.upper() == "DEFAULT"
+                                ):
+                                    if not constraint_name.startswith(
+                                        self.expected_prefix
+                                    ):
+                                        return self._create_lint_result(
+                                            segment,
+                                            constraint_name,
+                                            self.expected_prefix,
+                                        )
                                     break
-                                elif not next_seg.is_type("whitespace") and not next_seg.is_type("type"):
+                                elif not next_seg.is_type(
+                                    "whitespace"
+                                ) and not next_seg.is_type("type"):
                                     # If we hit something other than whitespace or a type definition
                                     # and it's not DEFAULT, this is not a DEFAULT constraint
                                     break
@@ -133,7 +146,9 @@ class Rule_CR05(BaseRule):
 
         return False, constraint_name
 
-    def _create_lint_result(self, segment, constraint_name: str, expected_prefix: str) -> LintResult:
+    def _create_lint_result(
+        self, segment, constraint_name: str, expected_prefix: str
+    ) -> LintResult:
         """
         Create a lint result for a constraint naming violation.
 
@@ -145,11 +160,13 @@ class Rule_CR05(BaseRule):
         Returns:
             LintResult: The lint result object
         """
-        self.logger.debug(f"DEFAULT constraint name '{constraint_name}' violates naming convention")
+        self.logger.debug(
+            f"DEFAULT constraint name '{constraint_name}' violates naming convention"
+        )
         return LintResult(
             anchor=segment,
             description=(
                 f"DEFAULT constraint name '{constraint_name}' should start with "
                 f"'{expected_prefix}'."
-            )
+            ),
         )

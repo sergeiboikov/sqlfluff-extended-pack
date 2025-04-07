@@ -29,26 +29,44 @@ class Rule_FN02(BaseRule):
     groups = ("all", "custom", "functions")
     config_keywords = []  # Intentionally empty to bypass validation
     # PostgreSQL uses CREATE FUNCTION statements rather than function_definition
-    crawl_behaviour = SegmentSeekerCrawler({
-        "function_definition",
-        "create_function_statement",
-        "statement",
-        "create_statement"
-    })
+    crawl_behaviour = SegmentSeekerCrawler(
+        {
+            "function_definition",
+            "create_function_statement",
+            "statement",
+            "create_statement",
+        }
+    )
 
     # The expected prefix for function parameter names
     _DEFAULT_EXPECTED_PREFIX = "p_"
     COMMON_TYPES = [
-        "INT", "INTEGER", "TEXT", "VARCHAR", "CHAR",
-        "BOOLEAN", "DATE", "TIMESTAMP", "NUMERIC", "DECIMAL",
-        "FLOAT", "REAL", "JSON", "JSONB", "UUID", "ARRAY", "SETOF"
+        "INT",
+        "INTEGER",
+        "TEXT",
+        "VARCHAR",
+        "CHAR",
+        "BOOLEAN",
+        "DATE",
+        "TIMESTAMP",
+        "NUMERIC",
+        "DECIMAL",
+        "FLOAT",
+        "REAL",
+        "JSON",
+        "JSONB",
+        "UUID",
+        "ARRAY",
+        "SETOF",
     ]
 
     def __init__(self, code="FN02", description="", **kwargs):
         """Initialize the rule with configuration."""
         super().__init__(code=code, description=description, **kwargs)
         # Set default expected_prefix if not provided
-        self.expected_prefix = kwargs.get("expected_prefix", self._DEFAULT_EXPECTED_PREFIX)
+        self.expected_prefix = kwargs.get(
+            "expected_prefix", self._DEFAULT_EXPECTED_PREFIX
+        )
 
     def _eval(self, context: RuleContext) -> Optional[LintResult]:
         """Validate function parameters."""
@@ -66,7 +84,9 @@ class Rule_FN02(BaseRule):
                 # Check if any parameter violates the naming convention
                 for param_segment, param_name in parameters:
                     if not param_name.lower().startswith(self.expected_prefix):
-                        return self._create_lint_result(param_segment, param_name, self.expected_prefix)
+                        return self._create_lint_result(
+                            param_segment, param_name, self.expected_prefix
+                        )
 
             return None
         except Exception as e:
@@ -76,7 +96,9 @@ class Rule_FN02(BaseRule):
     def _is_create_function(self, segment) -> bool:
         """Check if the segment is a CREATE FUNCTION statement."""
         # If it's already a function_definition or create_function_statement, we're good
-        if segment.is_type("function_definition") or segment.is_type("create_function_statement"):
+        if segment.is_type("function_definition") or segment.is_type(
+            "create_function_statement"
+        ):
             return True
 
         # Otherwise, check if it's a generic statement that is a CREATE FUNCTION
@@ -94,8 +116,12 @@ class Rule_FN02(BaseRule):
 
             # Also check for CREATE OR REPLACE FUNCTION
             for i in range(len(keywords) - 3):
-                if (keywords[i] == "CREATE" and keywords[i + 1] == "OR" and
-                        keywords[i + 2] == "REPLACE" and keywords[i + 3] == "FUNCTION"):
+                if (
+                    keywords[i] == "CREATE"
+                    and keywords[i + 1] == "OR"
+                    and keywords[i + 2] == "REPLACE"
+                    and keywords[i + 3] == "FUNCTION"
+                ):
                     return True
 
         return False
@@ -123,7 +149,9 @@ class Rule_FN02(BaseRule):
             func_name_found = False
             for _, child in enumerate(segment.segments):
                 # If we've already found the function name, look for parentheses
-                if func_name_found and (child.is_type("bracketed") or child.is_type("parenthesized")):
+                if func_name_found and (
+                    child.is_type("bracketed") or child.is_type("parenthesized")
+                ):
                     parenthesized = child
                     break
 
@@ -131,7 +159,9 @@ class Rule_FN02(BaseRule):
                 if child.is_type("function_name") or child.is_type("object_reference"):
                     func_name_found = True
                 elif child.is_type("keyword") and child.raw.upper() == "FUNCTION":
-                    func_name_found = True  # The next non-whitespace might be the function name
+                    func_name_found = (
+                        True  # The next non-whitespace might be the function name
+                    )
 
         # Method 3: Just look for any parenthesized segment
         if not parenthesized:
@@ -226,11 +256,13 @@ class Rule_FN02(BaseRule):
             result_list.append(segment)
 
         # Recursively check all child segments
-        if hasattr(segment, 'segments') and segment.segments:
+        if hasattr(segment, "segments") and segment.segments:
             for child in segment.segments:
                 self._collect_identifiers(child, result_list)
 
-    def _create_lint_result(self, segment, parameter_name: str, expected_prefix: str) -> LintResult:
+    def _create_lint_result(
+        self, segment, parameter_name: str, expected_prefix: str
+    ) -> LintResult:
         """
         Create a lint result for a function parameter naming violation.
 
@@ -247,5 +279,5 @@ class Rule_FN02(BaseRule):
             description=(
                 f"Function parameter '{parameter_name}' should start with "
                 f"'{expected_prefix}'."
-            )
+            ),
         )

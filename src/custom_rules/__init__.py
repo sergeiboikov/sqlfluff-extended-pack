@@ -16,8 +16,7 @@ def get_configs_info() -> Dict[str, Any]:
     return {
         "expected_prefix": {
             "definition": (
-                "Expected prefix for PRIMARY KEY constraints. "
-                "Example: pk_ "
+                "Expected prefix for PRIMARY KEY constraints. " "Example: pk_ "
             ),
         },
     }
@@ -44,6 +43,15 @@ def get_rules() -> List[Type[BaseRule]]:
     from custom_rules.views.VW01 import Rule_VW01
 
     # Return the rules as a list
-    rules = [Rule_CR01, Rule_CR02, Rule_CR03, Rule_CR04, Rule_CR05, Rule_FN01, Rule_FN02, Rule_VW01]
+    rules = [
+        Rule_CR01,
+        Rule_CR02,
+        Rule_CR03,
+        Rule_CR04,
+        Rule_CR05,
+        Rule_FN01,
+        Rule_FN02,
+        Rule_VW01,
+    ]
     print(f"Loaded {len(rules)} rules: {[r.code for r in rules]}")
     return rules
